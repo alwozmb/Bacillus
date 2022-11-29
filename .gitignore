@@ -1,0 +1,5 @@
+/bin/
+.classpath
+/.settings/
+.gitignore.swp
+.project

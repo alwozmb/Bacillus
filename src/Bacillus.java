@@ -5,9 +5,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -24,7 +21,7 @@ public class Bacillus extends JFrame{
 					{ 0, 0, 0, 0, 0, 0, 0 }, 
 					{ 0, 0, 0, 0, 0, 0, 0 },
 					{ 0, 0, 0, 0, 0, 2, 2 }, 
-					{ 0, 0, 0, 0, 0, 2, 2 } };
+					{ 0, 0, 0, 0, 0, 2, 2 } }; // 빨간공은 1, 파란공은 2로 관리
 	boolean turn = true;
 	
 	
@@ -72,6 +69,7 @@ public class Bacillus extends JFrame{
 						
 							case KeyEvent.VK_UP: 
 								if(--set_y < 0) set_y=0;
+								
 								if(map[set_x][set_y] == 0) {
 									map[set_x][set_y] = 3;
 									System.out.println(set_x + ", " + set_y);
@@ -148,21 +146,23 @@ public class Bacillus extends JFrame{
 										}
 									}
 									System.out.println(set_x + ", " + set_y);
-									count_r++;
 									turn = false;
 									break;
 								}
 								else {
 									map[set_x][set_y] = 2;
-									for (int item1 : add) {
-										for (int item2 : add) {
-											if (map[set_x + item1][set_y+item2] == 1 ) {
-												map[set_x + item1][set_y+item2] = 2;
+									try {
+										for (int item1 : add) {
+											for (int item2 : add) {
+												if (map[set_x + item1][set_y+item2] == 1 ) {
+													map[set_x + item1][set_y+item2] = 2;
+												}
 											}
 										}
+									} catch(IndexOutOfBoundsException E) {
+										
 									}
 									System.out.println(set_x + ", " + set_y);
-									count_b++;
 									turn = true;
 									break;
 								}
@@ -207,61 +207,64 @@ public class Bacillus extends JFrame{
 					// TODO Auto-generated method stub
 					
 					if (e.getX() <= 245 && e.getY() <= 245) {
-						int [] copy_x = {35, 0, -35};
-						int [] copy_y = {35, 0, -35};
-						int [] add_x = {70, 35, 0, -35, -70};
-						int [] add_y = {70, 35, 0, -35, -70};
+						int [] copy = {35, 0, -35};
+						int [] add = {70, 35, 0, -35, -70};
 						
 						int x = e.getX() / x_max;
 						int y = e.getY() / y_max;
 						
-						if(((turn == true) && (map[x][y] == 1)) ||
-							(turn == false) && (map[x][y] == 2)) {
-							for(int item1 : copy_x) { //일부 파란 공 누를 때 좌표가 범위가 아니어서?? 오류가 나는 듯..
-								for (int item2 : copy_y) {
-									int x1 = (e.getX() + item1) / x_max;
-									int y1 = (e.getY() + item2) / y_max;
-									
-									if(map[x1][y1] != 0) {
-										continue;
-									}
-									else {
-										map[x1][y1] = 4;
-									}
-								}
-							}
-						}
-						else {
-							System.out.println("ERROR! 잘못 눌렀습니다.");
-						}
-
-						if(((turn == true) && (map[x][y] == 1)) ||
+						try {
+							if(((turn == true) && (map[x][y] == 1)) ||
 								(turn == false) && (map[x][y] == 2)) {
-							for(int item3 : add_x) {
-								for(int item4 : add_y) {
-									if(Math.abs(item3) + Math.abs(item4) >= 105) {
-										int x2 = (e.getX() + item3) / x_max;
-										int y2 = (e.getY() + item4) / y_max;
-										
-										if(map[x2][y2] != 0) {
+								for(int item1 : copy) { 
+									for (int item2 : copy) {
+										int x1 = (e.getX() + item1) / x_max;
+										int y1 = (e.getY() + item2) / y_max;
+										if (x1 >= 6) x1 = 6;
+										if (y1 >= 6) y1 = 6;
+																			
+										if(map[x1][y1] != 0) {
 											continue;
 										}
 										else {
-											map[x2][y2] = 5;
+											map[x1][y1] = 4;
 										}
-									}
-									else if((Math.abs(item3) == 70 || Math.abs(item4) == 70)) {
-										int x2 = (e.getX() + item3) / x_max;
-										int y2 = (e.getY() + item4) / y_max;
-										if(map[x2][y2] == 0)
-											map[x2][y2] = 5;
-									}
-									else {
-										continue;
 									}
 								}
 							}
+							else {
+								System.out.println("ERROR! 잘못 눌렀습니다.");
+							}
+						} catch (IndexOutOfBoundsException E) {
+							
 						}
+//						if(((turn == true) && (map[x][y] == 1)) ||
+//								(turn == false) && (map[x][y] == 2)) {
+//							for(int item3 : add) {
+//								for(int item4 : add) {
+//									if(Math.abs(item3) + Math.abs(item4) >= 105) {
+//										int x2 = (e.getX() + item3) / x_max;
+//										int y2 = (e.getY() + item4) / y_max;
+//										
+//										if(map[x2][y2] != 0) {
+//											continue;
+//										}
+//										else {
+//											map[x2][y2] = 5;
+//										}
+//									}
+//									else if((Math.abs(item3) == 70 || Math.abs(item4) == 70)) {
+//										int x2 = (e.getX() + item3) / x_max;
+//										int y2 = (e.getY() + item4) / y_max;
+//										if(map[x2][y2] == 0)
+//											map[x2][y2] = 5;
+//									}
+//									else {
+//										continue;
+//									}
+//								}
+//							}
+//						}
 															
 						if(map[x][y] == 1) {
 							set_x = x;
